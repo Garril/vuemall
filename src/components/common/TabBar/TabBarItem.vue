@@ -11,12 +11,13 @@
 
     <div :style="activeStyle">
       <slot name="item-text"></slot>
-      </div>
+    </div>
       
   </div>
 </template>
 
 <script>
+
   export default {
     name:'TabBarItem',
     props: {
@@ -43,10 +44,11 @@
     methods: {
       itemClick() {
         if(this.$route.path.indexOf(this.path)===-1)
-        this.$router.replace(this.path)
+        this.$router.push(this.path)
       }
     }
   }
+  
 </script>
 
 <style>
@@ -54,7 +56,8 @@
     flex: 1;
     text-align: center;
     height: 49px;  /* 一般为49px */
-    font-size: 14px;
+    font-size: 13px;
+    font-family: Helvetica;
   }
   #tab-bar .tab-bar-item img {
     width: 24px;
