@@ -40,7 +40,7 @@
       activeStyle() {
         return this.isActive ? {color: this.activeColor}:{}
       }
-    },
+    }, 
     methods: {
       itemClick() {
         if(this.$route.path.indexOf(this.path)===-1)
