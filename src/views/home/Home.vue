@@ -2,8 +2,13 @@
   <div id="home">
     <nav-bar class="home-nav-bar"> <div slot="nav-bar-center">购物街</div> </nav-bar>
     <!-- 这里的轮播图，有一个问题，有时候需要刷新，存在加载后，轮播图不会动的问题 -->
-    <scroll class="content" ref="scroll" :probe-type="3" @scroll="contentScroll">
-      <home-swiper :banners="this.banners"/>
+    <scroll class="content" 
+    ref="scroll" 
+    :probe-type="3" 
+    @scroll="contentScroll" 
+    :pull-up-load="true"
+    @pullingUp="loadMore">
+      <home-swiper :banners="this.banners"></home-swiper>
       
       <recommend-view :recommends="this.recommends"></recommend-view>
 
@@ -92,6 +97,7 @@
             this.curTab = 'sell';
             break;
         }
+        setTimeout(()=>{this.$refs.scroll.scroll.refresh()},1000)
       },
       // 网络请求
       getHomeMultidata() {
@@ -105,6 +111,7 @@
         getHomeGoods(type,page).then(res=>{
           this.goods[type].list.push(...res.data.list);
           this.goods[type].page+=1;
+          this.$refs.scroll.scroll.finishPullUp();
         })
       },
       backClick() {
@@ -113,6 +120,10 @@
       contentScroll(position) {
         this.isShowBackTop = (-position.y)>1500?true:false;
       },
+      loadMore() {
+        this.getHomeGoods(this.curTab);
+        this.$refs.scroll.scroll.refresh();
+      }
 
     },
     computed: {
