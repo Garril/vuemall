@@ -45,8 +45,8 @@
   }
   .tab-control .tab-control-item{
     flex: 1;
-    height: 33px;
-    line-height: 33px;
+    height: 35px;
+    line-height: 35px;
     font-size: 14px;
   }
   .active {

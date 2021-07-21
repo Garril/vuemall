@@ -2,19 +2,25 @@
   <div id="home">
     <nav-bar class="home-nav-bar"> <div slot="nav-bar-center">购物街</div> </nav-bar>
     <!-- 这里的轮播图，有一个问题，有时候需要刷新，存在加载后，轮播图不会动的问题 -->
+    
+    <tab-control :titles="['流行', '新款', '精选']"
+    @tabClick="tabClick"
+    ref="tabControl1"
+    class="tab-control" v-show="isTabFixed"/>
+
     <scroll class="content" 
     ref="scroll" 
     :probe-type="3" 
     @scroll="contentScroll" 
     :pull-up-load="true"
     @pullingUp="loadMore">
-      <home-swiper :banners="this.banners"></home-swiper>
+      <home-swiper :banners="this.banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       
       <recommend-view :recommends="this.recommends"></recommend-view>
 
       <feature-view></feature-view>
 
-      <tab-control :titles="['流行','新款','精选']" class="tab-control" @tabClick="tabClick"></tab-control>
+      <tab-control :titles="['流行','新款','精选']"  @tabClick="tabClick" ref="tabControl"></tab-control>
 
       <good-list :goods="showGoods"></good-list>
 
@@ -71,9 +77,16 @@
           'sell': {page:0,list:[]},
         },
 
+        // 当前tabControl显示的子组件
         curTab:'pop',
         
+        // 是否需要显示BackTop按钮
         isShowBackTop:false,
+
+        // 用于保存tabControl距离顶部的距离
+        tabContrOffsetTop:0,
+        // 是否需要吸顶，默认不需要
+        isTabFixed: false,
 
       }
     },
@@ -97,7 +110,35 @@
             this.curTab = 'sell';
             break;
         }
+        this.$refs.tabControl.currentIndex = index;
+        this.$refs.tabControl1.currentIndex = index;
         setTimeout(()=>{this.$refs.scroll.scroll.refresh()},1000)
+      },
+      backClick() {
+        this.$refs.scroll.scrollTo(0,0,500);
+      },
+      contentScroll(position) {
+        // 判断BackTop是否显示
+        this.isShowBackTop = (-position.y)>1500?true:false;
+        // 判断TabControl是否开始吸顶
+        this.isTabFixed = (-position.y)>this.tabContrOffsetTop?true:false;
+      },
+      loadMore() {
+        this.getHomeGoods(this.curTab);
+        this.$refs.scroll.scroll.refresh();
+      },
+      swiperImageLoad() {
+        this.tabContrOffsetTop = this.$refs.tabControl.$el.offsetTop;
+      },
+      // 防抖节流
+      debounce(func,delay) {
+        let timer = null
+        return function(...args) {
+          if(timer) clearTimeout(timer);
+          timer = setTimeout(()=>{
+            func.apply(this,args)
+          },delay)
+        }
       },
       // 网络请求
       getHomeMultidata() {
@@ -114,16 +155,7 @@
           this.$refs.scroll.scroll.finishPullUp();
         })
       },
-      backClick() {
-        this.$refs.scroll.scrollTo(0,0,500);
-      },
-      contentScroll(position) {
-        this.isShowBackTop = (-position.y)>1500?true:false;
-      },
-      loadMore() {
-        this.getHomeGoods(this.curTab);
-        this.$refs.scroll.scroll.refresh();
-      }
+      
 
     },
     computed: {
@@ -146,16 +178,8 @@
     color: rgb(243, 232, 232);
     font-weight: bolder;
     font-family: Helvetica;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
   }
-  .tab-control {
-    position: sticky;
-    top: 44px;
-  }
+
   /* .content {
     margin-top: 42px;
     height: calc(100% - 91px);
@@ -168,5 +192,10 @@
     right: 0;
     overflow: hidden;
     position: absolute;
+  }
+  .tab-control {
+    position: relative;
+    z-index: 9;
+    margin-top: -1px;
   }
 </style>
