@@ -1,6 +1,6 @@
 <template>
-  <div class="goods-item">
-    <a :href="goodsItem.link"><img :src="goodsItem.show.img" alt=""></a>
+  <div class="goods-item" @click="itemClick">
+    <img :src="goodsItem.show.img" alt="">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -12,13 +12,17 @@
 <script>
   export default {
     name:'GoodListItem',
-    
     props: {
       goodsItem: {
         type: Object,
         default() {
           return {}
         }
+      }
+    },
+    methods: {
+      itemClick() {
+        this.$router.push('/detail/'+this.goodsItem.iid);
       }
     },
 

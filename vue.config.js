@@ -7,7 +7,7 @@ module.exports = {
         'common': '@/common',
         'components': '@/components',
         'network': '@/network',
-        'views': '@/assets/views',
+        'views': '@/views',
         
         // 'router': '@/router', router和store不需要了，$router和$store直接引用对象
       }

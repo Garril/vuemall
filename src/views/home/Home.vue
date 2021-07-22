@@ -112,7 +112,7 @@
         }
         this.$refs.tabControl.currentIndex = index;
         this.$refs.tabControl1.currentIndex = index;
-        setTimeout(()=>{this.$refs.scroll.scroll.refresh()},1000)
+        setTimeout(()=>{this.$refs.scroll.scroll.refresh()},100)
       },
       backClick() {
         this.$refs.scroll.scrollTo(0,0,500);
