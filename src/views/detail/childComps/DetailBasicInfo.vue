@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-wrapper">
+  <div v-if="Object.keys(goods).length !== 0" class="detail-wrapper">
     <!-- 名字和价格 -->
     <div class="detail-title">{{goods.title}}</div>
     <div class="detail-price">
@@ -28,16 +28,11 @@
 <script>
   export default {
     name:'DetailBasicInfo',
-    data() {
-      return {
-
-      }
-    },
     props: {
       goods:{
         type:Object,
         default() {
-          return null
+          return {}
         }
       }
     }
@@ -52,7 +47,6 @@
     padding: 2px 10px;
     color: #999;
     border-bottom: 5px solid #f2f5f8;    
-    height: 1000px;
   }
 
   /* 名字和价格  */
@@ -108,7 +102,7 @@
     height: 14px;
   }
   .detail-cargo-info span {
-    font-size: 13px;
+    font-size: 12px;
     color: #333;
   }
 </style>

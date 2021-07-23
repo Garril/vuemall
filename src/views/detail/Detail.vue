@@ -5,6 +5,8 @@
     <detail-swiper :topImages="topImages"></detail-swiper>
 
     <detail-basic-info :goods="this.goods"></detail-basic-info>
+
+    <detail-shop-info :shop="this.shop"></detail-shop-info>
   </div>
 </template>
 
@@ -15,9 +17,10 @@
   import DetailNavBar from './childComps/DetailNavBar.vue'
   import DetailSwiper from './childComps/DetailSwiper.vue'
   import DetailBasicInfo from './childComps/DetailBasicInfo.vue'
+  import DetailShopInfo from './childComps/DetailShopInfo.vue'
 
   // 数据请求
-  import {getDetailMultidata,Goods} from 'network/detail.js'
+  import {getDetailMultidata,Goods,Shop,GoodsParam} from 'network/detail.js'
 
 
   export default {
@@ -26,13 +29,15 @@
       return {
         iid:null,
         topImages:[],
-        goods:null
+        goods:{},
+        shop:{},
       }
     },
     components: {
       DetailNavBar,
       DetailSwiper,
       DetailBasicInfo,
+      DetailShopInfo,
 
     },
     created() {
@@ -45,6 +50,8 @@
         this.topImages = t.itemInfo.topImages;
         // 拿到详细页全部数据
         this.goods = new Goods(t.columns,t.itemInfo,t.shopInfo.services);
+        // 店铺信息
+        this.shop = new Shop(t.shopInfo);
       });
     },
     methods: {
