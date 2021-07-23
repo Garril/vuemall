@@ -72,7 +72,6 @@
   .shop-info {
     padding: 15px 10px;
     border-bottom: 5px solid #f2f5f8;
-    height: 1000px;
   }
     /* 商家图标和名字 */
   .shop-top {
