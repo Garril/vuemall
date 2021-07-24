@@ -61,9 +61,6 @@
       RecommendView,
       FeatureView,
       TabControl,
-        BackTop,
-        BackTop,
-      
     },
     data() {
       return {

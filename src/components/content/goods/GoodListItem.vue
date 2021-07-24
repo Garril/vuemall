@@ -1,6 +1,6 @@
 <template>
   <div class="goods-item" @click="itemClick">
-    <img :src="comImage" alt="">
+    <img :src="comImage" alt="" @load="imgLoaded">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -22,7 +22,12 @@
     },
     methods: {
       itemClick() {
-        this.$router.push('/detail/'+this.goodsItem.iid);
+          this.$router.push('/detail/'+this.goodsItem.iid);
+          // 这里的推荐图，点进去，没有数据
+          // this.$router.push('/detail/'+this.goodsItem.shop_id);
+      },
+      imgLoaded() {
+        this.$bus.$emit('imgLoaded')
       },
     },
     computed: {

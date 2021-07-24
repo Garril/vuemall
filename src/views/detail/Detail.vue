@@ -1,6 +1,6 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav"></detail-nav-bar>
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick"></detail-nav-bar>
 
     <scroll class="scroll-content" 
     :pullUpLoad="true"
@@ -16,11 +16,11 @@
       
       <detail-goods-info :detail-info="this.goodsInfo" class="info"></detail-goods-info>
 
-      <detail-param-info :param-info="this.paramInfo"></detail-param-info>
+      <detail-param-info :param-info="this.paramInfo" ref="params"></detail-param-info>
 
-      <detail-comment :comment="this.commentInfo"></detail-comment>
+      <detail-comment :comment="this.commentInfo" ref="comments"></detail-comment>
 
-      <good-list :goods="this.recommends" class="good-list"></good-list>
+      <good-list :goods="this.recommends" class="good-list" ref="recommends"></good-list>
 
     </scroll>
 
@@ -55,7 +55,7 @@
         paramInfo:{},
         commentInfo:{},
         recommends:[],
-
+        themeTopY:[],
       }
     },
     components: {
@@ -89,6 +89,17 @@
         // 评论
         if(data.rate.cRate!==0)this.commentInfo = data.rate.list[0];
         // 获取推荐数据
+        
+        // this.$nextTick(()=>{
+          // 运用nextTick。在这里：Dom  this.$refs.params.$el已经被渲染出来了，
+          // 但是图片依然没有加载完。即目前offsetTop是不包含图片的，还是错的
+          // this.themeTopY = [];
+          // this.themeTopY.push(0);
+          // this.themeTopY.push(this.$refs.params.$el.offsetTop);
+          // this.themeTopY.push(this.$refs.comments.$el.offsetTop);
+          // this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
+          // console.log(this.themeTopY);          
+        // });
       });
       getRecommend().then(res=>{
         this.recommends = res.data.list;
@@ -106,15 +117,35 @@
       },
       getRefresh() {
         this.$refs.scroll.refresh();
-        console.log("下拉");
-      }
+      },
+      titleClick(index) {
+        this.$refs.scroll.scrollTo(0,-this.themeTopY[index],500);
+      },
+      getAllTop() {
+        this.themeTopY = [];
+        this.themeTopY.push(0);
+        this.themeTopY.push(this.$refs.params.$el.offsetTop);
+        this.themeTopY.push(this.$refs.comments.$el.offsetTop);
+        this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
+        console.log(this.themeTopY);          
+      },
     },
     mounted() {
       const refresh = this.debounce(this.$refs.scroll.refresh,50)
-      this.$bus.$on('itemImgLoad',()=>{
+      this.$bus.$on('imgLoaded',()=>{
         refresh();
+        if(this.$refs.params) {
+          setTimeout(()=>{
+            this.themeTopY = [];
+            this.themeTopY.push(0);
+            this.themeTopY.push(this.$refs.params.$el.offsetTop);
+            this.themeTopY.push(this.$refs.comments.$el.offsetTop);
+            this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
+          },100)
+        }
       })
-    }
+      
+    },
 
   }
 </script>

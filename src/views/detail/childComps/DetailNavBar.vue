@@ -33,6 +33,7 @@
     methods: {
       titleClick(index) {
         this.curIndex = index;
+        this.$emit('titleClick',index);
       },
       backClick() {
         this.$router.back();
