@@ -55,9 +55,7 @@
       },
     },
     methods:{
-      getInfo(){
-        console.log(this.shop);
-      },
+      
     },
     filters: {
       sellCountFilter:(value)=>{

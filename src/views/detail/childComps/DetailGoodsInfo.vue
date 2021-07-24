@@ -1,54 +1,31 @@
 <template>
-  <div v-if="Object.keys(goodsInfo).length !== 0" class="goods-info">
-
-
+  <div v-if="Object.keys(detailInfo).length !== 0" class="goods-info">
     <div class="info-desc clear-fix">
-      <div class="start"></div>
-      <div class="desc">{{goodsInfo.desc}}</div>
+      <div class="start">
+      </div>
+      <div class="desc">{{detailInfo.desc}}</div>
       <div class="end"></div>
     </div>
-
-    <div class="info-title">{{goodsInfo.detailImage[0].key}}</div>
-
-    <div class="info-image-list">
-      <img v-for="(item, index) in goodsInfo.detailImage[0].list" :key="index" :src="item" @load="imgLoad" alt="">
+    <div class="info-key">{{detailInfo.detailImage[0].key}}</div>
+    <div class="info-list">
+      <img v-for="(item, index) in detailInfo.detailImage[0].list" :src="item" :key="index" @load="imgLoaded" alt="">
     </div>
-
-
   </div>
 </template>
 
 <script>
 	export default {
 		name: "DetailGoodsInfo",
-    props: {
-      goodsInfo: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
-
-    },
-    data() {
-			return {
-				counter: 0,
-        imagesLength: 0
+    props: { 
+      detailInfo: {
+        type: Object
       }
     },
     methods: {
-      imgLoad() {
-        // 进行一次回调即可
-        if (++this.counter === this.imagesLength) {
-          this.$emit('imageLoad');
-        }
+      imgLoaded() {
+        this.$bus.$emit('itemImgLoad')
       }
     },
-    watch: {
-      goodsInfo() { // 获取图片的个数
-        this.imagesLength = this.goodsInfo.detailImage[0].list.length
-      }
-    }
 	}
 </script>
 
@@ -95,13 +72,13 @@
     font-size: 14px;
   }
 
-  .info-title {
+  .info-key {
     margin: 10px 0 10px 15px;
     color: #333;
     font-size: 15px;
   }
 
-  .info-image-list img {
+  .info-list img {
     width: 100%;
   }
 </style>

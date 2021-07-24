@@ -29,7 +29,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .swiper-wrapper {
     height: 300px;
     overflow: hidden;

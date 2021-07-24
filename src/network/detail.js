@@ -8,7 +8,7 @@ export function getDetailMultidata(iid) {
     },
   })
 }
-
+// 商品价格
 export class Goods {
   constructor(columns,itemInfo,services) {
     this.title = itemInfo.title
@@ -21,7 +21,7 @@ export class Goods {
     this.realPrice = itemInfo.lowNowPrice
   }
 }
-
+// 商家
 export class Shop {
   constructor(shopInfo) {
     this.logo = shopInfo.shopLogo;
@@ -33,7 +33,7 @@ export class Shop {
   }
 }
 
-
+// 商品的参数
 export class GoodsParam {
   constructor(info, rule) {
     // 注: images可能没有值(某些商品有值, 某些没有值)
@@ -41,4 +41,11 @@ export class GoodsParam {
     this.infos = info.set;
     this.sizes = rule.tables;
   }
+}
+
+// 详情页的推荐
+export function getRecommend() {
+  return request({
+    url:'/recommend'
+  })
 }

@@ -13,13 +13,13 @@
     name:'Scroll',
     data() {
       return {
-        scroll: null
+        scroll:{}
       }
     },
     props:{
       probeType:{
         type: Number,
-        default: 0
+        default: 1
       },
       pullUpLoad: {
         type:Boolean,
@@ -28,28 +28,32 @@
     },
   
     mounted() {
-      // 1. 创建BScroll对象
-      this.scroll = new BScroll(this.$refs.wrapper,{
-        click:true,
+
+      this.scroll = new BScroll(this.$refs.wrapper, {
         probeType: this.probeType,
-        pullUpLoad:this.pullUpLoad,
+        click: true,
+        pullUpLoad: this.pullUpLoad
       })
-      // 2. 监听滚动位置
-      this.scroll.on('scroll',(position)=>{
-        this.$emit('scroll',position);
+
+      // 2.将监听事件回调
+      this.scroll.on('scroll', pos => {
+        this.$emit('scroll', pos)
       })
-      // 3. 监听上拉事件
-      this.scroll.on('pullingUp',()=>{
-        this.$emit('pullingUp');
+
+      // 3.监听上拉到底部
+      this.scroll.on('pullingUp', () => {
+        this.$emit('pullingUp')
       })
     },
     
     methods: {
       scrollTo(x,y,time) {
         this.scroll.scrollTo(x,y,time);
-      }
-    }
-
+      },
+      refresh() {
+        this.scroll && this.scroll.refresh && this.scroll.refresh();
+      },
+    },
   }
 </script>
 

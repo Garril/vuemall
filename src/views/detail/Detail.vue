@@ -2,21 +2,26 @@
   <div id="detail">
     <detail-nav-bar class="detail-nav"></detail-nav-bar>
 
-    <scroll class="content" 
+    <scroll class="scroll-content" 
     :pullUpLoad="true"
-    :probeType="3"
-    ref="detail">
+    :probe-type="3"
+    @pullingUp="getRefresh"
+    ref="scroll">
+
       <detail-swiper :top-images="topImages"></detail-swiper>
 
       <detail-basic-info :goods="this.goods"></detail-basic-info>
 
       <detail-shop-info :shop="this.shop"></detail-shop-info>
       
-      <detail-goods-info :goods-info="this.goodsInfo" @imageLoad="getRefresh"></detail-goods-info>
+      <detail-goods-info :detail-info="this.goodsInfo" class="info"></detail-goods-info>
 
       <detail-param-info :param-info="this.paramInfo"></detail-param-info>
 
-      <detail-comment :comment="this.commentInfo" @LoadFinished="getRefresh"></detail-comment>
+      <detail-comment :comment="this.commentInfo"></detail-comment>
+
+      <good-list :goods="this.recommends" class="good-list"></good-list>
+
     </scroll>
 
   </div>
@@ -25,7 +30,7 @@
 <script>
   // 引用的组件
   import Scroll from 'components/common/scroll/Scroll.vue'
-
+  import GoodList from 'components/content/goods/GoodList.vue'
   // 子组件
   import DetailNavBar from './childComps/DetailNavBar.vue'
   import DetailSwiper from './childComps/DetailSwiper.vue'
@@ -35,7 +40,7 @@
   import DetailParamInfo from './childComps/DetailParamInfo.vue'
   import DetailComment from './childComps/DetailComment.vue'
   // 数据请求
-  import {getDetailMultidata,Goods,Shop,GoodsParam} from 'network/detail.js'
+  import {getDetailMultidata,Goods,Shop,GoodsParam,getRecommend} from 'network/detail.js'
 
 
   export default {
@@ -49,6 +54,7 @@
         goodsInfo:{},
         paramInfo:{},
         commentInfo:{},
+        recommends:[],
 
       }
     },
@@ -57,10 +63,11 @@
       DetailSwiper,
       DetailBasicInfo,
       DetailShopInfo,
-      Scroll,
       DetailGoodsInfo,
       DetailParamInfo,
       DetailComment,
+      Scroll,
+      GoodList,
 
     },
     created() {
@@ -68,26 +75,46 @@
       this.iid = this.$route.params.iid;
 
       getDetailMultidata(this.iid).then(res=>{
-        const t = res.result;  
+        const data = res.result;  
         // 根据iid请求对应的商品轮播图数据
-        this.topImages = t.itemInfo.topImages;
+        this.topImages = data.itemInfo.topImages;
         // 拿到详细页全部数据
-        this.goods = new Goods(t.columns,t.itemInfo,t.shopInfo.services);
+        this.goods = new Goods(data.columns,data.itemInfo,data.shopInfo.services);
         // 店铺信息
-        this.shop = new Shop(t.shopInfo);
+        this.shop = new Shop(data.shopInfo);
         // 商品的详情数据
-        this.goodsInfo = t.detailInfo;
+        this.goodsInfo = data.detailInfo;
         // 商品参数信息
-        this.paramInfo = new GoodsParam(t.itemParams.info,t.itemParams.rule);
+        this.paramInfo = new GoodsParam(data.itemParams.info,data.itemParams.rule);
         // 评论
-        if(t.rate.cRate!==0)this.commentInfo = t.rate.list[0];
+        if(data.rate.cRate!==0)this.commentInfo = data.rate.list[0];
+        // 获取推荐数据
       });
+      getRecommend().then(res=>{
+        this.recommends = res.data.list;
+      })
     },
     methods: {
+      debounce(func, delay) {
+        let timer = null
+        return function (...args) {
+          if (timer) clearTimeout(timer)
+          timer = setTimeout(() => {
+            func.apply(this, args)
+          }, delay)
+        }
+      },
       getRefresh() {
-        this.$refs.detail.scroll.refresh();
+        this.$refs.scroll.refresh();
+        console.log("下拉");
       }
     },
+    mounted() {
+      const refresh = this.debounce(this.$refs.scroll.refresh,50)
+      this.$bus.$on('itemImgLoad',()=>{
+        refresh();
+      })
+    }
 
   }
 </script>
@@ -104,8 +131,15 @@
     z-index: 10;
     background-color: #fff;
   }
-  .content {
-    height: calc(100vh - 44px);
+  .scroll-content {
+    position: absolute;
+    top: 44px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
   }
-
+  .info {
+    position: relative;
+  }
 </style>

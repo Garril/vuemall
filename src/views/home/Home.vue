@@ -7,7 +7,7 @@
     @tabClick="tabClick"
     ref="tabControl1"
     class="tab-control" v-show="isTabFixed"/>
-
+    
     <scroll class="content" 
     ref="scroll" 
     :probe-type="3" 

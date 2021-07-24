@@ -1,19 +1,14 @@
 <template>
     <div id="hy-swiper">
       <div class="swiper" @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
-
         <slot></slot>
-      
       </div>
-
-      <slot name="indicator"></slot>
-      
+      <slot name="indicator">
+      </slot>
       <div class="indicator">
-        
         <slot name="indicator" v-if="showIndicator && slideCount>1">
           <div v-for="(item, index) in slideCount" class="indi-item" :class="{active: index === currentIndex-1}" :key="index"></div>
         </slot>
-        
       </div>
     </div>
 </template>
@@ -22,19 +17,19 @@
 	export default {
 		name: "Swiper",
     props: {
-      interval: { // 多久滚动一张图片
+      interval: {
 		    type: Number,
         default: 3000
       },
-      animDuration: { // 延迟多久开始
+      animDuration: {
 		    type: Number,
         default: 300
       },
-      moveRatio: { // 滚动多少比例滑到下一张
+      moveRatio: {
         type: Number,
         default: 0.25
       },
-      showIndicator: { // 指示器
+      showIndicator: {
         type: Boolean,
         default: true
       }
@@ -55,7 +50,7 @@
 
         // 2.开启定时器
         this.startTimer();
-      }, 100)
+      }, 3000)
     },
     methods: {
 		  /**
