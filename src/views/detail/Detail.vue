@@ -1,11 +1,12 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" @titleClick="titleClick"></detail-nav-bar>
+    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav"></detail-nav-bar>
 
     <scroll class="scroll-content" 
     :pullUpLoad="true"
     :probe-type="3"
     @pullingUp="getRefresh"
+    @scroll="contentScroll"
     ref="scroll">
 
       <detail-swiper :top-images="topImages"></detail-swiper>
@@ -58,6 +59,7 @@
         themeTopY:[],
         flag:false,
         getThemeTopY:null,
+        curIndex:0,
       }
     },
     components: {
@@ -132,6 +134,17 @@
       },
       goodsInfoLoaded() {
         this.getThemeTopY();
+      },
+      contentScroll(pos) {
+        const posY = -pos.y;
+        let len = this.themeTopY.length;
+        for(let i = 0;i<len;i++) {
+          if(this.curIndex!==i)
+            if((i===len-1&&posY>=this.themeTopY[i])||(i<len-1&&this.themeTopY[i]<=posY&&posY<=this.themeTopY[i+1])) {
+              this.curIndex=i;
+              this.$refs.nav.curIndex = this.curIndex;
+            }
+        }
       }
 
     },

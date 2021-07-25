@@ -30,6 +30,14 @@
         curIndex:0
       }
     },
+    props: {
+      propsCurIndex:{
+        type:Number,
+        default() {
+          return 0
+        }
+      }
+    },
     methods: {
       titleClick(index) {
         this.curIndex = index;
