@@ -14,7 +14,7 @@
 
       <detail-shop-info :shop="this.shop"></detail-shop-info>
       
-      <detail-goods-info :detail-info="this.goodsInfo" class="info"></detail-goods-info>
+      <detail-goods-info :detail-info="this.goodsInfo" class="info" @goodsInfoLoaded="goodsInfoLoaded"></detail-goods-info>
 
       <detail-param-info :param-info="this.paramInfo" ref="params"></detail-param-info>
 
@@ -56,8 +56,8 @@
         commentInfo:{},
         recommends:[],
         themeTopY:[],
-        len:0,
         flag:false,
+        getThemeTopY:null,
       }
     },
     components: {
@@ -102,6 +102,13 @@
           // this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
           // console.log(this.themeTopY);          
         // });
+        this.getThemeTopY = this.debounce(()=>{
+            this.themeTopY = [];
+            this.themeTopY.push(0);
+            this.themeTopY.push(this.$refs.params.$el.offsetTop);
+            this.themeTopY.push(this.$refs.comments.$el.offsetTop);
+            this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
+        },100);
       });
       getRecommend().then(res=>{
         this.recommends = res.data.list;
@@ -123,25 +130,28 @@
       titleClick(index) {
         this.$refs.scroll.scrollTo(0,-this.themeTopY[index],500);
       },
+      goodsInfoLoaded() {
+        this.getThemeTopY();
+      }
+
     },
     mounted() {
       const refresh = this.debounce(this.$refs.scroll.refresh,50);
       this.$bus.$on('imgLoaded',()=>{
         refresh();
-        if(this.goodsInfo.detailImage)this.len=(this.goodsInfo.detailImage[0].list.length)*15;
-        else this.len =500;
-        if(this.$refs.params) {
-          if(!this.flag){
-            setTimeout(()=>{
-              this.themeTopY = [];
-              this.themeTopY.push(0);
-              this.themeTopY.push(this.$refs.params.$el.offsetTop);
-              this.themeTopY.push(this.$refs.comments.$el.offsetTop);
-              this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
-            },(this.len));
-            this.flag=true;
-          }
-        }
+        // this.len=(this.goodsInfo.detailImage[0].list.length)*15;
+        // if(this.$refs.params) {
+        //   if(!this.flag){
+        //     setTimeout(()=>{
+        //       this.themeTopY = [];
+        //       this.themeTopY.push(0);
+        //       this.themeTopY.push(this.$refs.params.$el.offsetTop);
+        //       this.themeTopY.push(this.$refs.comments.$el.offsetTop);
+        //       this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
+        //     },(this.len));
+        //     this.flag=true;
+        //   }
+        // }
       })
     },
 
