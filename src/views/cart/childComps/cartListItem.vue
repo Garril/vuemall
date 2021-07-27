@@ -22,10 +22,10 @@
 </template>
 
 <script scoped>
-  import CheckButton from './CheckButton.vue'
+  import CheckButton from 'components/content/checkButton/CheckButton'
 
   export default {
-    name:'cartListItem',
+    name:'CartListItem',
     components: {
       CheckButton
     },

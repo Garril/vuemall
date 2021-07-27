@@ -65,8 +65,8 @@
         flag:false,
         getThemeTopY:null,
         curIndex:0,
-        // 是否需要显示BackTop按钮
-        isShowBackTop:false,        
+        isShowBackTop:false,// 是否需要显示BackTop按钮
+        
       }
     },
     components: {
@@ -170,9 +170,11 @@
         product.price = this.goods.realPrice;
         product.iid = this.iid;
         // 将商品加入到购物车,用Vuex，总线不行，用的话必须保证购物车组件创建完毕
-        this.$store.dispatch('addCart',product);
+        this.$store.dispatch('addCart',product).then(res=>{
+          // 拿到了添加购物车成功的消息
+          this.$toast.showInfo(res,1500)
+        });
       },
-
 
     },
     mounted() {

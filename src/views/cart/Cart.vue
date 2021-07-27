@@ -7,13 +7,15 @@
     <!-- 中间的商品 -->
     <cart-list></cart-list>
     <!-- 底部的信息 -->
-
+    <cart-bottom-bar></cart-bottom-bar>
   </div>
 </template>
 
 <script>
   import NavBar from 'components/common/navbar/NavBar.vue'
-  import CartList from './childComps/cartList.vue'
+  
+  import CartBottomBar from './childComps/CartBottomBar'
+  import CartList from './childComps/CartList'
   
 
   import { mapGetters } from 'vuex'
@@ -23,7 +25,8 @@
     components: {
       NavBar,
       CartList,
-      
+      CartBottomBar,
+
     },
     computed: {
       ...mapGetters([
