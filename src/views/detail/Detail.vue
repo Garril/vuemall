@@ -8,7 +8,6 @@
     @pullingUp="getRefresh"
     @scroll="contentScroll"
     ref="scroll">
-
       <detail-swiper :top-images="topImages"></detail-swiper>
 
       <detail-basic-info :goods="this.goods"></detail-basic-info>
@@ -25,6 +24,10 @@
 
     </scroll>
 
+    <detail-bottom-bar @addCart="addToCart"></detail-bottom-bar>
+    
+    <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+
   </div>
 </template>
 
@@ -32,6 +35,7 @@
   // 引用的组件
   import Scroll from 'components/common/scroll/Scroll.vue'
   import GoodList from 'components/content/goods/GoodList.vue'
+  import BackTop from 'components/content/backTop/BackTop.vue'
   // 子组件
   import DetailNavBar from './childComps/DetailNavBar.vue'
   import DetailSwiper from './childComps/DetailSwiper.vue'
@@ -40,6 +44,7 @@
   import DetailGoodsInfo from './childComps/DetailGoodsInfo.vue'
   import DetailParamInfo from './childComps/DetailParamInfo.vue'
   import DetailComment from './childComps/DetailComment.vue'
+  import DetailBottomBar from './childComps/DetailBottomBar.vue'
   // 数据请求
   import {getDetailMultidata,Goods,Shop,GoodsParam,getRecommend} from 'network/detail.js'
 
@@ -60,6 +65,8 @@
         flag:false,
         getThemeTopY:null,
         curIndex:0,
+        // 是否需要显示BackTop按钮
+        isShowBackTop:false,        
       }
     },
     components: {
@@ -72,6 +79,8 @@
       DetailComment,
       Scroll,
       GoodList,
+      DetailBottomBar,
+      BackTop,
 
     },
     created() {
@@ -105,11 +114,11 @@
           // console.log(this.themeTopY);          
         // });
         this.getThemeTopY = this.debounce(()=>{
-            this.themeTopY = [];
-            this.themeTopY.push(0);
-            this.themeTopY.push(this.$refs.params.$el.offsetTop);
-            this.themeTopY.push(this.$refs.comments.$el.offsetTop);
-            this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
+              this.themeTopY = [];
+              this.themeTopY.push(0);
+              this.themeTopY.push(this.$refs.params.$el.offsetTop);
+              this.themeTopY.push(this.$refs.comments.$el.offsetTop);
+              this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
         },100);
       });
       getRecommend().then(res=>{
@@ -137,6 +146,7 @@
       },
       contentScroll(pos) {
         const posY = -pos.y;
+        // 空间换时间，可以给themeTopY多一个数为maxInt，之后就没必要整i===len-1情况
         let len = this.themeTopY.length;
         for(let i = 0;i<len;i++) {
           if(this.curIndex!==i)
@@ -145,26 +155,31 @@
               this.$refs.nav.curIndex = this.curIndex;
             }
         }
-      }
+         // 判断BackTop是否显示
+        this.isShowBackTop = posY>1500?true:false;
+      },
+      backClick() {
+        this.$refs.scroll.scrollTo(0,0,500);
+      },
+      addToCart() {
+        // 获取商品信息
+        const product = {}
+        product.image = this.topImages[0];
+        product.title = this.goods.title;
+        product.desc = this.goods.desc;
+        product.price = this.goods.realPrice;
+        product.iid = this.iid;
+        // 将商品加入到购物车,用Vuex，总线不行，用的话必须保证购物车组件创建完毕
+        this.$store.dispatch('addCart',product);
+      },
+
 
     },
     mounted() {
       const refresh = this.debounce(this.$refs.scroll.refresh,50);
       this.$bus.$on('imgLoaded',()=>{
         refresh();
-        // this.len=(this.goodsInfo.detailImage[0].list.length)*15;
-        // if(this.$refs.params) {
-        //   if(!this.flag){
-        //     setTimeout(()=>{
-        //       this.themeTopY = [];
-        //       this.themeTopY.push(0);
-        //       this.themeTopY.push(this.$refs.params.$el.offsetTop);
-        //       this.themeTopY.push(this.$refs.comments.$el.offsetTop);
-        //       this.themeTopY.push(this.$refs.recommends.$el.offsetTop);
-        //     },(this.len));
-        //     this.flag=true;
-        //   }
-        // }
+
       })
     },
 
@@ -186,7 +201,7 @@
   .scroll-content {
     position: absolute;
     top: 44px;
-    bottom: 0;
+    bottom: 49px;
     left: 0;
     right: 0;
     overflow: hidden;
